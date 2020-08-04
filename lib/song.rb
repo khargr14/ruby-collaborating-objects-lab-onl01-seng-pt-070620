@@ -1,11 +1,19 @@
-describe '#songs' do
-    it 'lists all songs that belong to this artist' do
-      artist = Artist.new('Michael Jackson')
-      dirty_diana = Song.new("Dirty Diana")
-      billie_jean = Song.new("Billie Jean")
-      piano_man = Song.new("Piano Man")
-      artist.add_song(dirty_diana)
-      artist.add_song(billie_jean)
-      expect(artist.songs).to eq([dirty_diana, billie_jean])
-    end
+class Song
+  attr_accessor :artist, :name
+
+  def initialize(name)
+    @name = name
   end
+
+  def artist_name=(name)
+    self.artist = Artist.find_or_create_by_name(name)
+    artist.add_song(self)
+  end
+
+  def self.new_by_filename(file)
+    song_info = file.chomp(".mp3").split(" - ")
+    song = Song.new(song_info[1])
+    song.artist_name = song_info[0]
+    song
+  end
+end
